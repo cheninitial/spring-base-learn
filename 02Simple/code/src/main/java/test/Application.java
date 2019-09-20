@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.Duration;
 
-@SpringBootApplication()
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @RestController
 @Import({MyCommandLineRunner.class, MyApplicationRunner.class})
 @EnableConfigurationProperties(PersonProperties.class)
@@ -57,7 +57,7 @@ public class Application {
 
         System.out.println("duration: " + duration.toString());
 
-        return "hello";
+        return "hello  aaa";
     }
 
     public static void main(String[] args) {

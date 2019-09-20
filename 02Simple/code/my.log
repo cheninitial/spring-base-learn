@@ -95,3 +95,29 @@ Using generated security password: 8a769683-2388-4552-b6f0-1a8497cea2a3
 2019-09-20 16:07:01.591  INFO 17378 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2019-09-20 16:07:01.599  INFO 17378 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms
 2019-09-20 16:34:38.888  INFO 17378 --- [Thread-4] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-09-20 17:11:53.106  INFO 23048 --- [main] test.Application                         : Starting Application on dcminideMacBook-Pro.local with PID 23048 (/Users/dcmini/Documents/study2/mygithub/spring-base-learn/02Simple/code/target/classes started by dcmini in /Users/dcmini/Documents/study2/mygithub/spring-base-learn/02Simple/code)
+2019-09-20 17:11:53.109  INFO 23048 --- [main] test.Application                         : No active profile set, falling back to default profiles: default
+2019-09-20 17:11:55.018  INFO 23048 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2019-09-20 17:11:55.079  INFO 23048 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2019-09-20 17:11:55.080  INFO 23048 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-09-20 17:11:55.298  INFO 23048 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2019-09-20 17:11:55.299  INFO 23048 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2096 ms
+2019-09-20 17:11:55.894  INFO 23048 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2019-09-20 17:11:56.368  INFO 23048 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@eb469d9, org.springframework.security.web.context.SecurityContextPersistenceFilter@37e12a5b, org.springframework.security.web.header.HeaderWriterFilter@27c35c28, org.springframework.security.web.csrf.CsrfFilter@20cda634, org.springframework.security.web.authentication.logout.LogoutFilter@35639a9, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@6d5c9927, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@74a1441f, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@59bb6663, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@f21a983, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@17581e07, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@6adf33f3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4436ae41, org.springframework.security.web.session.SessionManagementFilter@5d65bf49, org.springframework.security.web.access.ExceptionTranslationFilter@4adf7180, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@17ecc615]
+2019-09-20 17:11:56.462  INFO 23048 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2019-09-20 17:11:56.467  INFO 23048 --- [main] test.Application                         : Started Application in 5.149 seconds (JVM running for 17.233)
+2019-09-20 17:12:33.750  INFO 23048 --- [Thread-31] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2019-09-20 17:12:42.114  INFO 23078 --- [main] test.Application                         : Starting Application on dcminideMacBook-Pro.local with PID 23078 (/Users/dcmini/Documents/study2/mygithub/spring-base-learn/02Simple/code/target/classes started by dcmini in /Users/dcmini/Documents/study2/mygithub/spring-base-learn/02Simple/code)
+2019-09-20 17:12:42.118  INFO 23078 --- [main] test.Application                         : No active profile set, falling back to default profiles: default
+2019-09-20 17:12:43.667  INFO 23078 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2019-09-20 17:12:43.747  INFO 23078 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2019-09-20 17:12:43.748  INFO 23078 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.21]
+2019-09-20 17:12:43.862  INFO 23078 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2019-09-20 17:12:43.862  INFO 23078 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1646 ms
+2019-09-20 17:12:44.407  INFO 23078 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2019-09-20 17:12:44.882  INFO 23078 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2019-09-20 17:12:44.887  INFO 23078 --- [main] test.Application                         : Started Application in 3.527 seconds (JVM running for 7.99)
+2019-09-20 17:14:03.475  INFO 23078 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2019-09-20 17:14:03.475  INFO 23078 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2019-09-20 17:14:03.483  INFO 23078 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+2019-09-20 17:14:37.061  INFO 23078 --- [Thread-28] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
