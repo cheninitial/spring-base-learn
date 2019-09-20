@@ -1,0 +1,8 @@
+test/PersonProperties.class
+test/MyConfiguration.class
+test/Application.class
+test/MyCommandLineRunner.class
+test/MyApplicationRunner.class
+test/MyConfiguration$1.class
+test/MyDisposableBean.class
+test/MyListener.class

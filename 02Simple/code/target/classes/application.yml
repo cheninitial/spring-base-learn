@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: my hello world
+  autoconfigure:
+    exclude:
+  security:
+    user:
+      name: root
+      password: 123
+
+person:
+  name: chen
+  age: 18
+
+test:
+  duration: PT1H30S
+
+logging:
+  file: my.log
