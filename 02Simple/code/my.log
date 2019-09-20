@@ -94,3 +94,4 @@ Using generated security password: 8a769683-2388-4552-b6f0-1a8497cea2a3
 2019-09-20 16:07:01.591  INFO 17378 --- [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2019-09-20 16:07:01.591  INFO 17378 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2019-09-20 16:07:01.599  INFO 17378 --- [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 8 ms
+2019-09-20 16:34:38.888  INFO 17378 --- [Thread-4] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
