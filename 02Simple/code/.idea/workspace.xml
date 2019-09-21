@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee7b53d9-ed83-4bb2-9fc3-651b355c70fe" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/rebel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/code.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/my.log" beforeDir="false" afterPath="$PROJECT_DIR$/my.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/test/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/test/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/test/Application.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/test/Application.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -364,18 +359,17 @@
       <option name="presentableId" value="Default" />
       <updated>1568949373747</updated>
       <workItem from="1568949375234" duration="6320000" />
-      <workItem from="1568970613293" duration="238000" />
+      <workItem from="1568970613293" duration="538000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6564000" />
+    <option name="totallyTimeSpent" value="6858000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" id="JRebel" sideWeight="0.50076103" side_tool="true" visible="true" weight="0.25274727" />
+      <window_info id="JRebel" sideWeight="0.50076103" side_tool="true" visible="true" weight="0.25274727" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49923897" visible="true" weight="0.25274727" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
@@ -383,8 +377,8 @@
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info id="Web" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Problems" />
-      <window_info anchor="bottom" id="JRebel Console" side_tool="true" />
-      <window_info anchor="bottom" id="JRebel Executor" visible="true" weight="0.32959184" />
+      <window_info anchor="bottom" id="JRebel Console" sideWeight="0.50061053" side_tool="true" weight="0.32959184" />
+      <window_info active="true" anchor="bottom" id="JRebel Executor" sideWeight="0.4993895" visible="true" weight="0.32959184" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32959184" />
@@ -524,16 +518,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="29" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="29" />
-          <folding>
-            <element signature="e#257#258#0" expanded="true" />
-            <element signature="e#284#285#0" expanded="true" />
-            <element signature="e#324#325#0" expanded="true" />
-            <element signature="e#356#357#0" expanded="true" />
-            <element signature="e#387#388#0" expanded="true" />
-            <element signature="e#413#414#0" expanded="true" />
-            <element signature="e#452#453#0" expanded="true" />
-            <element signature="e#482#483#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
