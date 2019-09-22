@@ -2,7 +2,7 @@ spring:
   application:
     name: @name@
   autoconfigure:
-    exclude:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   security:
     user:
       name: root

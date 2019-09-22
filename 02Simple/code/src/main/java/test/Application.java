@@ -17,7 +17,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.Duration;
 
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+//@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication
 @RestController
 @Import({MyCommandLineRunner.class, MyApplicationRunner.class})
 @EnableConfigurationProperties(PersonProperties.class)

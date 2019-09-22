@@ -4,7 +4,9 @@ import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEven
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MyListener implements
         ApplicationListener<ApplicationStartingEvent>
 
