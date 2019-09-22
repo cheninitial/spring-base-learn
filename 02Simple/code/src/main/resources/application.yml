@@ -15,5 +15,5 @@ person:
 test:
   duration: PT1H30S
 
-logging:
-  file: my.log
+name: jar in application
+#name: ${random.uuid}

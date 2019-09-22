@@ -291,13 +291,13 @@ https://www.cnblogs.com/kevin-yuan/p/5437140.html
 
 
 
-## 生成Bean的方法
+## 生成`Bean`的方法
 
 ### ``@Component``
 
 在使用了 ``@SpringApplication`` 注解后 会自动扫描该类包下面的所有子包。
 
-然后在需要生成``Bean`` 的类上使用 ``@Component`` 、`@Service`、 `@Repository`、 `@Controller` 等注解，就可以了。
+然后在需要生成``Bean`` 的类上使用 ``@Component`` 、`@Service`、 `@Repository`、 `@Controller` 等注解，就可以了。可以看`@Service`、 `@Repository`、 `@Controller`的源码，其实他们里面都只有一个`@Compnent`注解
 
 ``Bean`` 的名字有如下三种情况
 
@@ -305,13 +305,403 @@ https://www.cnblogs.com/kevin-yuan/p/5437140.html
 - 类名前两个字母都是大写，则就是类名
 - 类名第一个字母大写，则将类名的第一个字母编程小写，作为名称
 
-> 疑问
+> 提示
 >
 > 为什么不直接把类名作为 ``Bean`` 的名字，还要再转化一下呢？
+>
+> 1、个人理解：因为 Spring Boot 在其他的注解中会使用 方法名 或者 变量名来寻找对应的Bean，所以这里规定bean的默认名字也使用这个规范
 
 
 
-## 
+**注解位置：**
+
+类
+
+**变量：**
+
+| 变量名 | 类型   | 说明       |
+| ------ | ------ | ---------- |
+| value  | String | Bean的名称 |
+
+
+
+### `@Bean`
+
+```java
+@Bean
+public HelloService helloService() {
+  return new HelloServiceImpl();
+}
+```
+
+
+
+如果有需要注入的依赖则直接传入就可以了， Spring boot会根据类型寻找依赖，如果找不到则会根据变量名称来寻找依赖。
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    public TransferService transferService(AccountRepository accountRepository) {
+        return new TransferServiceImpl(accountRepository);
+    }
+}
+```
+
+
+
+``Bean`` 的名字有如下三种情况
+
+- 注解中规定了的 ``name`` 或 ``value`` 的值
+- 方法名称
+
+
+
+**注解位置：**
+
+方法
+
+**变量：**
+
+| 变量名        | 类型     | 说明                                    |
+| ------------- | -------- | --------------------------------------- |
+| value         | String[] | Bean的名称                              |
+| name          | String[] | Bean的名称                              |
+| initMethod    | String   | 构造函数前调用的函数 = `@PostConstruct` |
+| destroyMethod | String   | 销毁的时候调用的函数 = ``@PreDestroy``  |
+
+
+
+### `@Import`
+
+在类上不需要加上``@Compnent``注解，只要在对应的``Configuration``中将其``@Import``就可以，类中的所有注解都会生效。
+
+
+
+**注解位置：**
+
+类
+
+**变量：**
+
+| 变量名 | 类型       | 说明             |
+| ------ | ---------- | ---------------- |
+| value  | Class<?>[] | 需要注入的所有类 |
+
+
+
+### xml配置文件方式
+
+在 `resources` 文件夹中创建 `beans.xml` 文件
+
+```xml
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="helloService" class="test.service.impl.HelloServiceImpl"></bean>
+
+</beans>
+```
+
+在 `Application` 中引入配置文件： `@ImportResource(locations = "classpath:beans.xml")`
+
+> 提示
+>
+> 现在Spring Boot已经不推荐使用xml的方式来配置了。
+
+
+
+## 获取`Bean`的方法
+
+### `@Autowired`
+
+这个方法适用于 `Bean` 来获取其他 `Bean`，也就是只有被 `Spring Boot` 扫描并生成的 `Bean` 中这个注解才会生效。
+
+`@Autowired` 作者给了它很多的逻辑，所以它 识别Bean的顺序非常的丰富
+
+- 根据类型获取，这里的类型可以是接口，可以是父类
+- 根据变量名称，匹配 `Bean` 名称
+
+
+
+**注解位置：**
+
+类、构造器、方法
+
+**变量：**
+
+| 变量名   | 类型    | 说明     |
+| -------- | ------- | -------- |
+| required | boolean | 是否必须 |
+
+
+
+消除注解歧义的方法
+
+- `@Primary`: 规定某一个实现拥有优先权
+- `@Qualifier`: 指定需要注入bean的名字
+
+
+
+### `ApplicationContext` 中获取
+
+`ApplicationContext` 也就是 Spring Boot的上下文，从中可以获取到所有的Bean
+
+可以直接`@Autowired`获取AplicationContext
+
+```java
+@Autowired
+private ApplicationContext applicationContext;
+```
+
+如果想要在全局都可以获取到`ApplicationContext` 可以将其获取到放入到 `static` 的变量中
+
+
+
+# 运行程序
+
+## `jar -jar`
+
+```shell
+$ java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n \
+			-jar target/myapplication-0.0.1-SNAPSHOT.jar
+```
+
+## 使用 maven plugin
+
+```shell
+$ mvn spring-boot:run
+```
+
+## 热部署
+
+使用 `Jerebel`
+
+
+
+# 开发者工具
+
+还没有开具体有什么用
+
+
+
+# `Application`
+
+## `Application` 的时间和监听器
+
+- `ApplicationStartingEvent`：启动前，什么都没有做的时候
+- `ApplicationEncironmentPreparedEvent`：`Environment`完成j加载的时候
+- `ApplicationPreparedEvent`：完成 Bean 的加载
+- `ApplicationStartedEvent`：所有都准备完成
+- `ApplicationReadyEvent`：完全准备完成
+- `ApplicationFailedEvent`：启动失败的时候
+
+
+
+```java
+public class MyListener implements
+        ApplicationListener<ApplicationStartingEvent> {
+
+    @Override
+    public void onApplicationEvent(ApplicationStartingEvent applicationStartingEvent) {
+        System.out.println("\n spring boot 启动时间 \n");
+    }
+}
+```
+
+
+
+使其生效有两种方法：
+
+调用`SpringApplication.addListeners()`方法
+
+```java
+springApplication.addListeners(new MyListener());
+```
+
+增加配置文件 `resource/META-INF/spring.factories`
+
+```properties
+org.springframework.context.ApplicationListener=test.listeners.MyListener
+```
+
+
+
+## 获取 `Arguments` 
+
+从 `ApplicationArguments` Bean中获取
+
+```java
+@Component
+public class MyBean {
+@Autowired
+public MyBean(ApplicationArguments args) {
+  boolean debug = args.containsOption("debug");
+    List<String> files = args.getNonOptionArgs();
+    // if run with "--debug logfile.txt" debug=true, files=["logfile.txt"]
+  }
+}
+```
+
+
+
+## 使用 `ApplicationRunner` 或 `CommandLineRunner`
+
+可以在 Spring boot 启动后进行一些操作
+
+```java
+@Component
+public class MyBean implements CommandLineRunner {
+  public void run(String... args) {
+    // Do something...
+  }
+}
+```
+
+多个 `ApplicationRunner` 和 `CommandLineRunner` 可以使用 `@Order` 注解来规定其书序。
+
+`@Order` 是数值越大优先级越高
+
+
+
+## `Application Exit`
+
+SpirngApplication 在JVM上注册了一个关闭的钩子，我们可以使用
+
+- `DisposableBean`接口的Bean 
+- `@PreDestroy`
+
+来自定义程序退出的时候需要进行的操作。
+
+
+
+# 外部配置
+
+Spring boot 提供丰富的外化配置的功能，我们可以使用
+
+- `@Vaule`
+- `Environment` Bean
+- `@ConfigurationProperties` 然后使用 `@Autowired`注入当成一个Bean来用
+
+来获取到配置
+
+## 配置的优先级
+
+- `~/.spring-boot-devtolls.properties`， 开发工具的全局变量
+- `@TestPropertySource` 测试用例规定的加载配置文件
+- `@SpringBootTest#properties`
+- 命令行参数
+- 环境变量`SPRING_APPLICATION_JSON`
+  - `$ SPRING_APPLICATION_JSON='{"acme":{"name":"test"}}' java -jar myapp.jar`
+  - `$ java -Dspring.application.json='{"name":"test"}' -jar myapp.jar`
+  - `$ java -jar myapp.jar --spring.application.json='{"name":"test"}'`
+- `ServeletConfig`
+- `ServeletContext`
+- JNDI `java:comp/env`   没弄懂是什么
+- Java 系统变量（`System.getProperties()`）`java -jar -Dname="Java System" myproject-0.0.1-SNAPSHOT.jar`
+- 操作系统环境变量 `export name="OS"`
+- `RandomValuePropertySource` 带有随机变量的配置   没成功试验出来
+- `jar` 包外 `application-{profile}.properties`
+- `jar` 包内 `application-{profile}.properties`
+- `jar` 包外 `application.properties`
+- `jar` 保内 `application.properties`
+- `@PropertySource`
+- 默认配置(`SpringApplication.setDefaultProperties`)  `@Value `中配置的默认值
+
+
+
+## 配置的路径
+
+- 当前目录下的 `/config`目录
+- 当前目录
+- `classpath` 的 `/config`
+- `classpath` 目录
+
+
+
+`spring.config.location` ：改变扫描的路径
+
+`spring.config.name`： 改变扫描的文件名字
+
+
+
+## `@Value`
+
+可以在属性，方法，变量上注解，用于注入配置文件中的值，而且可以指定默认值
+
+```java
+@Value(${name})
+private String name;
+
+@Value(${name: Tom})
+private String name;
+
+@Value(${nams: name1,name2})
+private List<String> names;
+```
+
+
+
+## `@ConfigurationProperties`
+
+注解在类上，将一堆的配置信息转化为一个Bean。
+
+使用的时候
+
+```yaml
+person:
+  name: name1
+  age: 12
+```
+
+```java
+@ConfigurationProperties("person")
+class Persion{
+  private String name;
+  private Integer age;
+}
+```
+
+```java
+@Configuration
+@EnableConfigurationProperties(Persion.class)
+	public class MyConfiguration {
+}
+```
+
+```java
+@Autowired
+private Person person;
+```
+
+
+
+- 可以解析负载的 `Map` 对象
+
+- List 对象需要写成
+
+  ```yaml
+  name:
+  - name1
+  - name2
+  - name3
+  ```
+
+- 如果使用了 `Lombok` 那不能用为配置对象类添加任何的构造函数
+
+
+
+## `@Value` 和 `@ConfigurationProperties` 的对比
+
+|                        | `@ConfigurationProperties` | `@Value` |
+| ---------------------- | -------------------------- | -------- |
+| 松绑定                 | yes                        | no       |
+| Configuration Metadata | yes                        | no       |
+| SpEL                   | no                         | yes      |
+
+
 
 
 
