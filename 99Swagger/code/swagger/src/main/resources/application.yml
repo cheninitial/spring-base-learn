@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+swagger:
+  person:
+    basePackage:
+    - com.fang2chen.spring.study.swagger.controller
+    title: swagger页面
+    version: 2.0.0
+    protocols:
+    - http
+    - https
+    host: 127.0.0.1:8081
+    contactName: 房房房陈陈
+    contactUrl: http://wwww.fang2chen.com
+    contactEmail: cyl003@foxmail.com
+    description: swagger的实例工程
+
+
+
