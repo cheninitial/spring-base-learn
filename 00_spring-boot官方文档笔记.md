@@ -285,9 +285,68 @@ private List<String> getExcludeAutoConfigurationsProperty() {
 
 # Spring Beans 和 DI（依赖注入）
 
-``Bean`` 生成的名称，可以看下面的这个博客：
+`Spring`的`Bean`也就是控制反转`Inversion of Control`, `IOC`)
+
+`Bean` 是 `Spring` 的管理对象
+
+`Bean` 生成的名称，可以看下面的这个博客：
 
 https://www.cnblogs.com/kevin-yuan/p/5437140.html
+
+
+
+## `IOC` 容器
+
+`Spring IOC` 容器是一个管理`Bean`的容器，必须实现 `BeanFactory` 接口
+
+```java
+public interface BeanFactory{
+    // 前缀
+    String FACTORY_BEAN_PREFIX = "&";
+    
+    Object getBean(String name) thorows BeanException;
+    
+    <T> T getBean(String name, Class<T> requiredType) throws BeanException;
+    
+    <T> T getBean(Class<T> requiredType) throws BeanException;
+    
+    Object getBean(String name, Object... args) throws BeanException;
+    
+    <T> T getBean(Class<T> requiredType, Object... args) throws BeanException;
+    
+    // 判断是否包含bean
+    boolean containsBean(String name);
+    
+    // Bean是否单例
+    
+    
+    boolean isSigleton(String name) throws NoSuchBeanDefinitionException;
+    
+    // 是否类型匹配
+    boolean isTypeMatch(String name, ResolveType typeToMatch) throws NoSuchBeanDefinitionException;
+    
+    // 获取Bean的类型
+    Class<?> getType(String name) throws NoSuchBeanDefinitionException;
+    
+    // 获取Bean的别名
+    String[] getAliases(String name);
+}
+```
+
+
+
+`Spring` 在 `BeanFactory` 的基础上还设计了更加高级的 `ApplicationContext` 接口，在现实中 `Spring IOC` 的容器都是 `ApplicationContext` 接口的实现。
+
+`AnnotationConfigApplicationContext` 是 `ApplicationContext` 基于注解的实现，
+
+他的简单代码示例：
+
+```java
+ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class);
+ctx.getBean(User.class);
+```
+
+
 
 
 
@@ -390,6 +449,86 @@ public class AppConfig {
 
 
 
+### `@ComponentScan`
+
+批量的扫描包来生成`Bean`， 需要类上有相应的注解。
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Documented
+@Repeatable(CompentScans.class)
+public @interface ComponentScan {
+    
+    @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Documented
+@Repeatable(ComponentScans.class)
+public @interface ComponentScan {
+
+	// 扫描包
+	@AliasFor("basePackages")
+	String[] value() default {};
+
+	// 扫描包
+	@AliasFor("value")
+	String[] basePackages() default {};
+
+	// 定义扫描的类
+	Class<?>[] basePackageClasses() default {};
+
+	// Bean名称生成器
+	Class<? extends BeanNameGenerator> nameGenerator() default BeanNameGenerator.class;
+
+	// 作用域解析器
+	Class<? extends ScopeMetadataResolver> scopeResolver() default AnnotationScopeMetadataResolver.class;
+
+	// 作用域代理模式
+	ScopedProxyMode scopedProxy() default ScopedProxyMode.DEFAULT;
+
+	// 资源匹配模式
+	String resourcePattern() default ClassPathScanningCandidateComponentProvider.DEFAULT_RESOURCE_PATTERN;
+
+	// 开启默认过滤器
+	boolean useDefaultFilters() default true;
+
+	// 满足过滤器的条件时扫描
+	Filter[] includeFilters() default {};
+
+	// 当不满足过滤器条件的时候扫描
+	Filter[] excludeFilters() default {};
+
+	// 是否延迟初始化
+	boolean lazyInit() default false;
+    
+    @Retention(RetentionPolicy.RUNTIME)
+	@Target({})
+	@interface Filter {
+
+		// 过滤器类型，按照注解类型裸着正则表达式
+		FilterType type() default FilterType.ANNOTATION;
+
+		// 定义过滤的类
+		@AliasFor("classes")
+		Class<?>[] value() default {};
+
+		// 定义过滤的类
+		@AliasFor("value")
+		Class<?>[] classes() default {};
+
+		// 定义过滤方式
+		String[] pattern() default {};
+
+	}
+    
+    
+}
+```
+
+
+
+
+
 ### xml配置文件方式
 
 在 `resources` 文件夹中创建 `beans.xml` 文件
@@ -457,6 +596,137 @@ private ApplicationContext applicationContext;
 ```
 
 如果想要在全局都可以获取到`ApplicationContext` 可以将其获取到放入到 `static` 的变量中
+
+
+
+### 消除歧义性
+
+当 `@Autowired` 根据类型查找，找到有多个符合条件的`Bean`的时候就会出错。
+
+#### `@Primary`
+
+定义哪一个类具有优先性
+
+
+
+#### `@Qualifier`
+
+指定加载的名称
+
+
+
+## `Bean` 的生命周期
+
+```java
+@Component
+public class BussinessPerson implements BeanNameAware,
+        BeanFactoryAware, ApplicationContextAware, InitializingBean, DisposableBean {
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 BeanFactoryAware 的setBeanFactory方法");
+    }
+
+    @Override
+    public void setBeanName(String s) {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 BeanNameAware 的 setBeanName 方法");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 DisposableBean 的 destroy 方法");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 InitializingBean 的 afterPropertiesSet 方法");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 ApplicationContextAware 的 setApplicationContext 方法");
+    }
+
+    public BussinessPerson() {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了构造函数");
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 @PostConstruct ");
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        System.out.println("[" + this.getClass().getSimpleName() + "] 调用了 @PreDestroy ");
+    }
+}
+```
+
+
+
+```java
+@Component
+public class BeanPostProcessorExample implements BeanPostProcessor, Ordered {
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("BeanPostProcessor 调用 postProcessBeforeInitialization 的方法， 参数 [ " + bean.getClass().getSimpleName() + "] [ " + beanName + "]");
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("BeanPostProcessor 调用 postProcessAfterInitialization 的方法， 参数 [ " + bean.getClass().getSimpleName() + "] [ " + beanName + "]");
+        return bean;
+    }
+    
+    @Override
+    public int getOrder() {
+        return 1;
+    }
+}
+```
+
+
+
+**日志输出：**
+
+```
+[BussinessPerson] 调用了构造函数
+[BussinessPerson] 调用了 BeanNameAware 的 setBeanName 方法
+[BussinessPerson] 调用了 BeanFactoryAware 的 setBeanFactory 方法
+[BussinessPerson] 调用了 ApplicationContextAware 的 setApplicationContext 方法
+BeanPostProcessor 调用 postProcessBeforeInitialization 的方法， 参数 [ BussinessPerson] [ bussinessPerson]
+[BussinessPerson] 调用了 @PostConstruct 
+[BussinessPerson] 调用了 InitializingBean 的 afterPropertiesSet 方法
+BeanPostProcessor 调用 postProcessAfterInitialization 的方法， 参数 [ BussinessPerson] [ bussinessPerson]
+[BussinessPerson] 调用了 @PreDestroy 
+[BussinessPerson] 调用了 DisposableBean 的 destroy 方法
+```
+
+
+
+所以`Bean`的生命周期是：
+
+| 序号 | 接口                                                | 是否全局 | 方式 |
+| ---- | --------------------------------------------------- | -------- | ---- |
+| 1    | BeanNameAware.setBeanName()                         | ×        | 继承 |
+| 2    | BeanFactoryAware.setBeanFactory()                   | ×        | 继承 |
+| 3    | ApplicationContextAware.setApplicationContext()     | ×        | 继承 |
+| 4    | BeanPostProcessor.postProcessBeforeInitialization() | √        | Bean |
+| 5    | @PostConstruct()                                    | ×        | 注解 |
+| 6    | InitializingBean.afterPropertiesSet()               | ×        | 继承 |
+| 7    | BeanPostProcessor.postProcessAfterInitialization()  | √        | Bean |
+| 8    | 存续期                                              |          |      |
+| 9    | @PreDestroy()                                       | ×        | 注解 |
+| 10   | DisposableBean.destroy()                            | ×        | 继承 |
+
+
+
+多个 `BeanPostProcessor` 可以让其继承 `Ordered` 接口来规定其执行的顺序
+
+
 
 
 
