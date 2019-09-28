@@ -322,8 +322,6 @@ public interface BeanFactory{
     boolean containsBean(String name);
     
     // Bean是否单例
-    
-    
     boolean isSigleton(String name) throws NoSuchBeanDefinitionException;
     
     // 是否类型匹配
@@ -352,13 +350,11 @@ ctx.getBean(User.class);
 
 
 
-
-
 ## 生成`Bean`的方法
 
 ### ``@Component``
 
-在使用了 ``@SpringApplication`` 注解后 会自动扫描该类包下面的所有子包。
+在使用了 ``@SpringApplication`` 注解后 会自动扫描指定包下面的所有子包。
 
 然后在需要生成``Bean`` 的类上使用 ``@Component`` 、`@Service`、 `@Repository`、 `@Controller` 等注解，就可以了。可以看`@Service`、 `@Repository`、 `@Controller`的源码，其实他们里面都只有一个`@Compnent`注解
 
@@ -845,9 +841,142 @@ BeanPostProcessor 调用 postProcessAfterInitialization 的方法， 参数 [ Bu
 
 # `Spring AOP`
 
-面向切面编程
+面向切面编程，其中的基础就是动态代理模式，Spring Boot 使用量两种动态代理方式：
+
+- `JDK` 动态代理：当代理对象有接口实现的时候；
+  - 原理是在内存中生成一个代理对象并实现代理对象的所有接口
+- `CGLIB` 动态代理：当代理对象没有接口实现的时候；
+  - 原理shi在内存中生成一个代理对象并继承代理对象
+  - 所有需要注意一些修饰为 `final` 的东西，因为这些东西是不能被继承的
 
 
+
+## 动态代理简介
+
+### `JDK` 动态代理
+
+```java
+public interface HelloService {
+  String hello();
+}
+```
+
+```java
+public class HelloServiceImpl {
+  @Override
+  public String hello() {
+    System.out.println("[HelloServiceImpl] 调用 hello() 方法");
+    return "hello";
+  }
+}
+```
+
+```java
+// 代理的处理方法
+public class MyInvocationHandler implements InvocationHandler {
+  
+  private Object target;
+
+  public MyInvocationHandler(Object target) {
+    this.target = target;
+  }
+  
+  @Override
+  public Object invoke(Object proxy, Methode method, Object[] args) throws Throwable {
+    System.out.println("调用前");
+    Object object = method.invoke(target, args);
+    System.out.println("调用后");
+    return object;
+  }
+}
+```
+
+```java
+public class Test {
+  public static void main(String[] args){
+    HelloService helloService = new HelloServiceImpl();
+    HelloService proxy =
+      (HelloService) Proxy.newProxyInstance(
+      helloService.getClass().getClassLoader(),
+      helloService.getClass().getInterfaces(),
+      new MyInvocationHandler(helloService));
+    proxy.hello();
+  }
+}
+```
+
+
+
+### CGLIB 动态代理
+
+```java
+public class HelloServiceImpl2 {
+    public String hello() {
+        System.out.println("[HelloServiceImpl] 调用 hello() 方法");
+        return "hello";
+    }
+}
+```
+
+```java
+public class CglibMethodInterceptor implements MethodInterceptor {
+    @Override
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        System.out.println("调用前");
+        Object object = proxy.invokeSuper(obj, args);
+        System.out.println("调用后");
+        return object;
+    }
+}
+```
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(HelloServiceImpl2.class);
+        enhancer.setCallback(new CglibMethodInterceptor());
+
+        HelloServiceImpl2 proxy = (HelloServiceImpl2) enhancer.create();
+        proxy.hello();
+    }
+}
+```
+
+
+
+## `AOP` 的实现(还没有开明白)
+
+知道动态代理之后，我们理解 AOP 就比较容易了。因为我们执行的目标方法是`HelloService.hello()`，但是我们想要在执行方法前、后、出现异常等做一些特殊的事情，实现方法就是丰富 `InvocationHandler` 或 `MethodInterceptor` 的实现。
+
+
+
+## `AOP` 的使用
+
+使用 `@AspectJ` 注解方式来进行切面开发。 Spring AOP 只能对方法进行拦截，所以首选需要确认的是需要拦截什么方法。
+
+
+
+### 术语
+
+- 连接点（jion point）：具体被拦截的对象
+- 切点（point cut）：代表了一组连接点
+- 通知（advice）：对应流程不同环节中织入的方法
+  - 前置通知
+  - 后置通知
+  - 环绕通知
+  - 事后返回通知
+  - 异常通知
+- 目标对象（target）：也就是被代理对象
+- 引入（introduction）：引入新类和方法，增强现有Bean的功能
+- 织入（weaving）：就是找到连接点，截获方法，增强Bean功能的这个流程
+- 切面（aspect）：就是我们织入的那个约定
+
+
+
+### `spring aop` 约定的流程
+
+![image-20190928162702474](00_spring-boot官方文档笔记.assets/image-20190928162702474.png)
 
 
 

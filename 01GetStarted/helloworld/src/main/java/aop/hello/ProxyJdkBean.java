@@ -4,14 +4,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-public class ProxyBean implements InvocationHandler {
+public class ProxyJdkBean implements InvocationHandler {
 
     private Object target = null;
 
     private Interceptor interceptor = null;
 
     public static Object getProxyBean(Object target, Interceptor interceptor) {
-        ProxyBean proxyBean = new ProxyBean();
+        ProxyJdkBean proxyBean = new ProxyJdkBean();
         proxyBean.target = target;
         proxyBean.interceptor = interceptor;
 
