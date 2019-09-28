@@ -7,33 +7,33 @@ spring:
 
 test:
   str: str
-#  intValue: 1
-#  int_value2: 2
-#  doubleValue: 3
-#  StringList1: "1", str1, str2
-#  StringList2:
-#    - "1"
-#    - str1
-#    - str2
-#  doubleList1: 1, 2, 3
-#  doubleList2:
-#    - 1
-#    - 2
-#    - 3
-#    - 4
-#  testPojo:
-#    str: pojo1
-#  testPojoList:
-#    - str: pojo2
-#    - str: pojo3
-#  mapStringString:
-#    key1: value1
-#    key2: value2
-#  mapStringTestPojo:
-#    key3:
-#      str: pojo4
-#    key4:
-#      str: pojo5
+  intValue: 1
+  int_value2: 2
+  doubleValue: 3
+  StringList1: "1", str1, str2
+  StringList2:
+    - "1"
+    - str1
+    - str2
+  doubleList1: 1, 2, 3
+  doubleList2:
+    - 1
+    - 2
+    - 3
+    - 4
+  testPojo:
+    str: pojo1
+  testPojoList:
+    - str: pojo2
+    - str: pojo3
+  mapStringString:
+    key1: value1
+    key2: value2
+  mapStringTestPojo:
+    key3:
+      str: pojo4
+    key4:
+      str: pojo5
 
 
 

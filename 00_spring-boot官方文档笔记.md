@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 # 系统要求
 
 目标spring boot 版本是2.1.6-RELEASE
@@ -615,6 +619,117 @@ private ApplicationContext applicationContext;
 
 
 
+## 条件装配`Bean`
+
+### `@Conditional`
+
+`@Conditional` 注解可以自定义用于筛选的类方法，其需要实现 `Condition` 接口。
+
+```java
+public class DatabaseConditional implements Condition {
+    
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetada metada){
+        Environment env = context.getEnvironment;
+        return env.containsProperty("database.driverName")
+            && env.containsProperty("database.url");
+    }
+}
+```
+
+
+
+### `@ConditionalOnXXX`
+
+- `@ConditionalOnBean` 当指定 `Bean`存在的时候装配
+- `@ConditionalOnClass` 当指定类存在的时候装配
+- `@ConditionalOnMissingBean` 当指定 `Bean` 不存在的时候装配
+- `@ConditionalOnMissingClass` 当指定类不存在的时候装配
+- `@ConditionalOnProperty` 当指定配置存在值得时候
+  - `@ConditionalOnProperty(prefix = "spring.h2.console", name = "enabled", havingValue = "true", matchIfMissing = false)`
+
+
+
+### `@Profile`
+
+将根据 `spring.profiles.active` 和 `spring.profiles.default` 的值来决定时候加载。
+
+
+
+## 动态注册 `Bean`
+
+```java
+@Component
+@Slf4j
+public class PersonBeanDefinitionRegistryPostProcessor
+		implements BeanDefinitionRegistryPostProcessor {
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
+    throws BeansException {
+        // 注册Bean定义，容器根据定义返回bean
+        log.info("register personManager1>>>>>>>>>>>>>>>>");
+        //构造bean定义
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
+				.genericBeanDefinition(PersonManager.class);
+        //设置依赖
+        beanDefinitionBuilder.addPropertyReference("personDao", "personDao");
+        BeanDefinition personManagerBeanDefinition = beanDefinitionBuilder
+				.getRawBeanDefinition();
+        //注册bean定义
+        registry.registerBeanDefinition("personManager1", personManagerBeanDefinition);
+
+	}
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+    throws BeansException {
+        // 注册Bean实例，使用supply接口
+        log.info("register personManager2>>>>>>>>>>>>>>>>");
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
+            .genericBeanDefinition(PersonManager.class, () -> {
+	         PersonDao personDao = beanFactory.getBean(PersonDao.class);
+                 PersonManager personManager = new PersonManager();
+                 personManager.setPersonDao(personDao);
+                 return personManager;
+         });
+         BeanDefinition personManagerBeanDefinition = beanDefinitionBuilder
+            .getRawBeanDefinition();
+        ((DefaultListableBeanFactory) beanFactory)
+          .registerBeanDefinition("personManager2", personManagerBeanDefinition);
+    }
+}
+```
+
+
+
+## `Bean` 的作用域
+
+作用域也就是实例数是怎么分配的
+
+| 作用域类型      | 说明                                                |
+| --------------- | --------------------------------------------------- |
+| `singleton`     | 默认值，`IoC`容器只存在单例                         |
+| `prototype`     | 每当从`IoC`容器中取出一个`Bean`，则创建一个新的Bean |
+| `session`       | HTTP会话                                            |
+| `application`   | Web工程生命周期                                     |
+| `request`       | Web工程单词请求                                     |
+| `globalSession` | 在一个全局HTTP Session中                            |
+
+
+
+定义作用域
+
+-  `@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)`
+-  `@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)`
+- `@Scope(WebApplicationContext.SCOPE_REQUEST)`
+- `@Scope(WebApplicationContext.SCOPE_SESSION)`
+- `@Scope(WebApplicationContext.SCOPE_APPLICATION)`
+
+
+
+
+
 ## `Bean` 的生命周期
 
 ```java
@@ -725,6 +840,14 @@ BeanPostProcessor 调用 postProcessAfterInitialization 的方法， 参数 [ Bu
 
 
 多个 `BeanPostProcessor` 可以让其继承 `Ordered` 接口来规定其执行的顺序
+
+
+
+# `Spring AOP`
+
+面向切面编程
+
+
 
 
 
@@ -960,6 +1083,8 @@ private Person person;
   ```
 
 - 如果使用了 `Lombok` 那不能用为配置对象类添加任何的构造函数
+
+- 需要使用`@Component` 注解后 `@EnableConfigurationProperties` 注解，将其装配成 `Bean`
 
 
 
