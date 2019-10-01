@@ -957,6 +957,17 @@ public class Test {
 
 
 
+pom 中引入依赖
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
+
+
+
 ### 术语
 
 - 连接点（jion point）：具体被拦截的对象
@@ -979,6 +990,143 @@ public class Test {
 ![image-20190928162702474](00_spring-boot官方文档笔记.assets/image-20190928162702474.png)
 
 
+
+### 定义切面
+
+**无参数切面**
+
+```java
+@Component
+@Aspect
+public class MyAspect {
+
+    static {
+        System.out.println("【MyAspect】 加载");
+    }
+		
+    // 定义切点
+    @Pointcut("execution(* aop.spring.service.UserServiceImpl.printUser(..))")
+    public void pointCut() {
+        System.out.println("[MyAspect] 调用 pointCut() 方法");
+    }
+
+    // 前置通知
+    @Before("pointCut()")
+    public void before() {
+        System.out.println("[MyAspect] 调用 before() 方法");
+    }
+
+    // 后置通知
+    @After("pointCut()")
+    public void After() {
+        System.out.println("[MyAspect] 调用 After() 方法");
+    }
+
+    // 返回通知
+    @AfterReturning("pointCut()")
+    public void AfterReturning() {
+        System.out.println("[MyAspect] 调用 AfterReturning() 方法");
+    }
+
+    // 异常通知
+    @AfterThrowing("pointCut()")
+    public void AfterThrowing() {
+        System.out.println("[MyAspect] 调用 AfterThrowing() 方法");
+    }
+}
+```
+
+
+
+**带上参数的切面**
+
+```java
+@Component
+@Aspect
+public class MyAspect2 {
+
+    static {
+        System.out.println("【MyAspect2】 加载");
+    }
+
+    @Pointcut("@annotation(aop.spring.aspect.AspectAnnotation)")
+    public void pointCut() {
+        System.out.println("[MyAspect2] 调用 pointCut() 方法");
+    }
+
+    @Before("pointCut() && args(name)")
+    public void before(
+            JoinPoint joinPoint, String name
+    ) {
+        System.out.println("[MyAspect2] 调用 before() 方法, name参数为： " + name);
+    }
+
+    @After("pointCut()")
+    public void After() {
+        System.out.println("[MyAspect2] 调用 After() 方法");
+    }
+
+    @AfterReturning("pointCut()")
+    public void AfterReturning() {
+        System.out.println("[MyAspect2] 调用 AfterReturning() 方法");
+    }
+
+    @AfterThrowing("pointCut()")
+    public void AfterThrowing() {
+        System.out.println("[MyAspect2] 调用 AfterThrowing() 方法");
+    }
+  	
+    @Around("pointCut()")
+    public void arroud(ProceedingJoinPoint joinPoint) throws Throwable{
+        System.out.println("[MyAspect2] 调用 arroud() 方法， 前");
+        joinPoint.proceed();
+        System.out.println("[MyAspect2] 调用 arroud() 方法， 后");
+    }
+}
+```
+
+
+
+**环绕通知**
+
+环绕同志是最强大的通知，但是也是最复杂的，它完全可以完成其他任何一个通知的功能。
+
+在有些版本中 `@Before` 可能在 `@Aroud`之后执行的
+
+
+
+### 切点表达式
+
+- `execution()`： 正则表达式配置方法
+  - `execution(* aop.spring.service.UserServiceImpl.printUser(..))`
+    - `*`： 任意返回类型
+    - `aop.spring.service.UserServiceImpl`：全路径类名
+    - `printUser`：方法名
+    - `(..)`：任意参数
+- `args()`：方法参数
+- `@args()`：和 arg() 作用相同
+- `@annotation`：带指定注解的连接点
+
+
+
+### 多个切面的执行顺序
+
+使用 `@Order` 注解 或者 实现 `Ordered` 接口
+
+至于方法执行的顺序，看一个答应就好了
+
+```
+MyAspect1 before .....
+MyAspect2 before .....
+MyAspect3 before .....
+测试多切面的顺序
+MyAspect3 after .....
+MyAspect3 afterReturning .....
+MyAspect2 after .....
+MyAspect2 afterReturning .....
+MyAspect1 after .....
+MyAspect1 afterReturning .....
+```
 
 
 
@@ -1224,6 +1372,289 @@ private Person person;
 | 松绑定                 | yes                        | no       |
 | Configuration Metadata | yes                        | no       |
 | SpEL                   | no                         | yes      |
+
+
+
+# 数据库编程
+
+## 数据库配置
+
+具体的配置可以随便百度一下就好了， 这里主要给出 `MySql` 的配置内容。
+
+
+
+**pom**
+
+```xml
+<dependency>
+  <groupId>mysql</groupId>
+  <artifactId>mysql-connector-java</artifactId>
+</dependency>
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+```
+
+
+
+**配置文件中增加配置**
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3316/spring?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: cyl199203
+    tomcat:
+      max-idle: 10
+      max-active: 50
+      max-wait: 10000
+      initial-size: 5
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+需要注意的是 url 中携带的参数。
+
+- `useUnicode`： 是否使用 Unicode
+- `characterEncoding` ：使用字符编码， 对应不上的话中文可能会出现乱码
+- `serverTimezone=CTT` ：设置的时区，CCT 是中国
+
+
+
+## 操作数据库
+
+### JdbcTemplate
+
+这种c啊哦做已经不太使用了，这里大家了解一下就好了。
+
+```java
+@Service
+public class JdbcTmplUserServiceImpl implements JdbcTmplUserService {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate = null;
+
+    /**
+     * <p>
+     *     定义一个映射关系
+     *     这个横向MyBatis中的 Mapper 的功能
+     * </p>
+     * @return : RowMapper<User>
+     */
+    private RowMapper<User> getUserMapper() {
+        RowMapper<User> userRowMapper = new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setUserName(resultSet.getString("user_name"));
+                int sexId = resultSet.getInt("sex");
+                SexEnum sexEnum = SexEnum.getEnumById(sexId);
+                user.setSex(sexEnum);
+                user.setNote(resultSet.getString("note"));
+                return user;
+            }
+        };
+        return userRowMapper;
+    }
+
+    @Override
+    public User getUser(Long id) {
+        String sql = "select id, user_name, sex, note from t_user where id = ?";
+        Object[] params = new Object[]{id.toString()};
+        // 直接写 id 会出现错误
+//        Object[] params = new Object[]{id};
+        User user = jdbcTemplate.queryForObject(sql, params, getUserMapper());
+        return user;
+    }
+
+    @Override
+    public List<User> findUsers(String userName, String note) {
+        String sql = "select id, user_name, sex, note from t_user " +
+                "where user_name like concat('%', ?, '%') " +
+                "and note like concat('%', ? '%') ";
+        Object[] params = new Object[]{userName, note};
+        List<User> userList = jdbcTemplate.query(sql, params, getUserMapper());
+        return userList;
+    }
+
+    @Override
+    public int insertUser(User user) {
+        String sql = "insert into t_user (user_name, sex, note) values (?,?,?)";
+        return jdbcTemplate.update(sql, user.getUserName(), user.getSex().getId(), user.getNote());
+    }
+
+    @Override
+    public int updateUser(User user) {
+        String sql = "update t_user set user_name = ?, sex = ?, note = ? where id =?";
+        return jdbcTemplate.update(sql, user.getUserName(), user.getSex().getId(), user.getNote(), user.getId());
+    }
+
+    @Override
+    public int deleteUser(Long id) {
+        String sql = "delete from t_user where id = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public User getUser2(Long id) {
+        User result = jdbcTemplate.execute(new StatementCallback<User>() {
+            @Override
+            public User doInStatement(Statement statement) throws SQLException, DataAccessException {
+                String sql1 = "select count(*) as total from t_user where id = " + id;
+                ResultSet rs1 = statement.executeQuery(sql1);
+                while (rs1.next()) {
+                    int total = rs1.getInt("total");
+                    System.out.println(total);
+                }
+
+                String sql2 = "select id, user_name, sex, note from t_user where id = " + id;
+                ResultSet rs2 = statement.executeQuery(sql2);
+                User user = null;
+                while (rs2.next()) {
+                    int rowNum = rs2.getRow();
+                    user = getUserMapper().mapRow(rs2, rowNum);
+                }
+                return user;
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public User getUser3(Long id) {
+        return jdbcTemplate.execute(new ConnectionCallback<User>() {
+            @Override
+            public User doInConnection(Connection connection) throws SQLException, DataAccessException {
+                String sql1 = "select count(*) as total from t_user " +
+                        "where id = ？";
+                PreparedStatement ps1 = connection.prepareStatement(sql1);
+                ps1.setString(1, id.toString());
+                ResultSet rs1 = ps1.executeQuery();
+                while (rs1.next()) {
+                    System.out.println(rs1.getInt("total"));
+                }
+
+                String sql2 = "select id, user_name, sex, note from t_user " +
+                        "where id = ?";
+                PreparedStatement ps2 = connection.prepareStatement(sql2);
+                ps2.setString(1, id.toString());
+                ResultSet rs2 = ps2.executeQuery();
+                User user = null;
+                while (rs2.next()) {
+                    int rowNum = rs2.getRow();
+                    user = getUserMapper().mapRow(rs2, rowNum);
+                }
+
+                return user;
+            }
+        });
+    }
+}
+```
+
+
+
+### JPA(Hibernate)
+
+JPA(java persistence API)， 是定义了对象关系映射（ORM）以及实体对象持久化的标准接口。JPA是依靠 Hibernate 得以实现的。
+
+pom 中增加配置
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+
+
+Spring boot 启动类中增加注解
+
+```java
+@SpringBootApplication(scanBasePackages = "datasource.jpa")
+@EnableJpaRepositories(basePackages = "datasource.jpa.dao")
+@EntityScan(basePackages = "datasource.jpa.pojo")
+public class JpaTest {
+
+    public static void main(String[] args) {
+        SpringApplication.run(JpaTest.class, args);
+    }
+
+}
+```
+
+- EnableJpaRepositories： 规定定义了Repository 接口的类的位置
+- EntityScan：对应实体的位置
+
+
+
+实体类
+
+```java
+@Entity(name = "user")  // Entity 名称
+@Table(name = "t_user")  // 对应表名
+public class User {
+
+    @Id		// 标记注解
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 标记主键值生成方式
+    private Long id;
+
+    @Column(name = "user_name")    // 属性名 和 表字段名 对应的关系
+    private String userName;
+
+    private String note;
+
+    @Convert(converter = SexConverter.class)  // 特殊对象的转换关系
+    private SexEnum sex;
+  
+  // getter / setter
+}
+```
+
+
+
+转换工具对象
+
+```java
+public class SexConverter implements AttributeConverter<SexEnum, Integer> {
+
+    @Override
+    public Integer convertToDatabaseColumn(SexEnum sexEnum) {
+        return sexEnum.getId();
+    }
+
+    @Override
+    public SexEnum convertToEntityAttribute(Integer integer) {
+        return SexEnum.getEnumById(integer);
+    }
+}
+```
+
+
+
+使用的方法
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = JpaTest.class)
+public class JpaUserRepositoryTest {
+    @Autowired
+    private JpaUserRepository jpaUserRepository;
+   
+    @Test
+    public void getUser() {
+        User user = jpaUserRepository.findById(7L).get();
+        System.out.println(user);
+        
+    }
+}
+```
+
+
 
 
 

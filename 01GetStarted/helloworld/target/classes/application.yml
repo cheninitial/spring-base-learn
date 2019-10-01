@@ -1,39 +1,48 @@
 spring:
   application:
     name: my hello world
-  autoconfigure:
-    exclude:
+  datasource:
+    # 需要加上 useUnicode=true&characterEncoding=UTF-8 不然中文在数据库中会出现 ？
+    url: jdbc:mysql://127.0.0.1:3316/spring?useUnicode=true&characterEncoding=UTF-8
+    password: cyl199203
+    tomcat:
+      max-idle: 10
+      max-active: 50
+      max-wait: 10000
+      initial-size: 5
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
 
 
-test:
-  str: str
-  intValue: 1
-  int_value2: 2
-  doubleValue: 3
-  StringList1: "1", str1, str2
-  StringList2:
-    - "1"
-    - str1
-    - str2
-  doubleList1: 1, 2, 3
-  doubleList2:
-    - 1
-    - 2
-    - 3
-    - 4
-  testPojo:
-    str: pojo1
-  testPojoList:
-    - str: pojo2
-    - str: pojo3
-  mapStringString:
-    key1: value1
-    key2: value2
-  mapStringTestPojo:
-    key3:
-      str: pojo4
-    key4:
-      str: pojo5
+#test:
+#  str: str
+#  intValue: 1
+#  int_value2: 2
+#  doubleValue: 3
+#  StringList1: "1", str1, str2
+#  StringList2:
+#    - "1"
+#    - str1
+#    - str2
+#  doubleList1: 1, 2, 3
+#  doubleList2:
+#    - 1
+#    - 2
+#    - 3
+#    - 4
+#  testPojo:
+#    str: pojo1
+#  testPojoList:
+#    - str: pojo2
+#    - str: pojo3
+#  mapStringString:
+#    key1: value1
+#    key2: value2
+#  mapStringTestPojo:
+#    key3:
+#      str: pojo4
+#    key4:
+#      str: pojo5
 
 
 
