@@ -44,7 +44,7 @@ spring:
 #    key4:
 #      str: pojo5
 
-
-
-
-
+mybatis:
+  mapper-locations: classpath:datasource/mybatis/mapper/*.xml
+  type-aliases-package: datasource.mybatis.pojo
+  type-handlers-package: datasource.mybatis.type.handler

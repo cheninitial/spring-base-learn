@@ -1656,6 +1656,33 @@ public class JpaUserRepositoryTest {
 
 
 
+### Mybatis
+
+#### 特点
+
+- 基于 SQL 到 POJO 的模型，使用 XML 或者注解配置
+- 自动映射， 驼峰映射等
+- 动态SQL
+
+
+
+可配置内容：
+
+- properties：spring 进行配置
+- settings：改变Mybatis底层行为
+  - 映射规则
+  - 执行器类型
+  - 缓存等
+- typeAliasses：类型别名
+- typeHandlers： 类型处理器。javaType 和 JdbcType 的相互转化
+- objectFactory：对象工厂。
+- plugins：插件，拦截器。 通过动态代理和责任链模式
+- environments：数据库连接内容和事务
+- databaseIdProvider：数据库厂商标识
+- mappers：映射器。SQL 和 POJO 的映射关系。
+
+
+
 
 
 
