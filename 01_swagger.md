@@ -352,6 +352,10 @@ public class Swagger2Controller {
 
 # swagger-codegen
 
+其最终的目的就是根据服务器 `api-docs` 生成个亿调用服务器的函数代码。
+
+
+
 根据`api-docs` 生成 `api client` 的代码。
 
 获取到`api-docs` 并储存到文件中。
@@ -360,19 +364,17 @@ public class Swagger2Controller {
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>example-istio-car</artifactId>
-        <groupId>com.uaescloud.istio.platform</groupId>
+        <artifactId>example-istio-ecu</artifactId>
+        <groupId>com.XXXX.istio.platform</groupId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>example-istio-car-client</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>example-istio-ecu-client</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -399,6 +401,7 @@ public class Swagger2Controller {
             <groupId>org.threeten</groupId>
             <artifactId>threetenbp</artifactId>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -420,10 +423,14 @@ public class Swagger2Controller {
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>
-        <client-base-package-path>com.uaescloud.istio.platform.example.istio.car.client</client-base-package-path>
+        <client-base-package-path>com.uaescloud.istio.platform.example.istio.ecu.client</client-base-package-path>
         <client-docs-path>${project.basedir}/apiJson/api-docs.json</client-docs-path>
     </properties>
 
@@ -441,6 +448,8 @@ public class Swagger2Controller {
                     <modelPackage>${client-base-package-path}.model</modelPackage>
                     <configOptions>
                         <sourceFolder>src/main/java</sourceFolder>
+                        <dateLibrary>legacy</dateLibrary>
+                        <library>resttemplate</library>
                     </configOptions>
                 </configuration>
                 <executions>
@@ -454,3 +463,21 @@ public class Swagger2Controller {
 </project>
 ```
 
+这是我贴的其他项目的 `api-client` 的pom 文件， 其中 `swagger-codegen-maven-plugin` 就是打包生成插件了。
+
+需要注意几个参数的含义：
+
+- `inputSpec` ：也就是 `api-docs` 的路径， 可以是一个 文件目录，也可以是一个URL
+- `language`：需要生成的语言，目前只用过`java`的，其实还有很多，`js`、`go` 啥的都有
+- `output`：生成羡慕的出书路径
+- `apiPackage`：`api` 接口的类的包名
+- `modelPackage`： 模型类的包名
+- `configOptions`：附加的配置项， 这个项目里的内容是用来配置生成规则的，可以使用 `java -jar swagger-codegen-cli-2.3.1.jar config-help -l java` 来查看
+  - `sourceFolder` ： 源码目录
+  - `dataLibaray`： 使用何种时间处理对象来处理时间属性。
+  - `library`: 使用何种框架来生成。
+    - `resttemplate` ： 也就是 `RestTemplate + Jackson`
+
+
+
+关于使用方法就不多说了， 生成的 `README.md` 中会有非常详细的说明。
