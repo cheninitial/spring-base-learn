@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="269ad703-8d83-4869-9d6f-c2405ba525d5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/HelloService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/HelloServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/Interceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/InterceptorImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/Invocation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/aop/hello/ProxyBean.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/config/properties/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/config/properties/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
-    </list>
+    <list default="true" id="269ad703-8d83-4869-9d6f-c2405ba525d5" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -149,6 +137,7 @@
     <findStrings>
       <find>depen</find>
       <find>start-class</find>
+      <find>ih</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -352,12 +341,12 @@
       <updated>1568944476109</updated>
       <workItem from="1568944480060" duration="2335000" />
       <workItem from="1569506523967" duration="5098000" />
-      <workItem from="1569587445900" duration="3814000" />
+      <workItem from="1569587445900" duration="4411000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11247000" />
+    <option name="totallyTimeSpent" value="11844000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
@@ -371,7 +360,7 @@
       <window_info id="Web" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34303215" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34303215" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39941478" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
