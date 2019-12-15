@@ -13,6 +13,7 @@
         <module>spring-failure-analyzer</module>
         <module>spring-customer-banner</module>
         <module>spring-application-event</module>
+        <module>spring-application-arguments</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
