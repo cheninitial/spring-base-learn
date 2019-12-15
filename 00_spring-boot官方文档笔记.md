@@ -1658,7 +1658,7 @@ public class JpaUserRepositoryTest {
 
 ### Mybatis
 
-#### 特点
+特点
 
 - 基于 SQL 到 POJO 的模型，使用 XML 或者注解配置
 - 自动映射， 驼峰映射等
@@ -1680,6 +1680,396 @@ public class JpaUserRepositoryTest {
 - environments：数据库连接内容和事务
 - databaseIdProvider：数据库厂商标识
 - mappers：映射器。SQL 和 POJO 的映射关系。
+
+
+
+pom
+
+```xml
+<dependency>
+  <groupId>org.mybatis.spring.boot</groupId>
+  <artifactId>mybatis-spring-boot-starter</artifactId>
+  <version>1.3.1</version>
+</dependency>
+```
+
+
+
+pojo
+
+```java
+import datasource.enumeration.SexEnum;
+import lombok.Data;
+import org.apache.ibatis.type.Alias;
+
+@Alias(value = "user")
+@Data
+public class User {
+
+    private Long id;
+
+    private String userName;
+
+    private String note;
+
+    private SexEnum sex = null;
+
+}
+```
+
+
+
+type handler
+
+```java
+import datasource.enumeration.SexEnum;
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+@MappedJdbcTypes(JdbcType.INTEGER)
+@MappedTypes(value = SexEnum.class)
+public class SexTypeHandler extends BaseTypeHandler<SexEnum> {
+
+    @Override
+    public void setNonNullParameter(PreparedStatement preparedStatement, int i, SexEnum sexEnum, JdbcType jdbcType) throws SQLException {
+        preparedStatement.setInt(i, sexEnum.getId());
+    }
+
+    @Override
+    public SexEnum getNullableResult(ResultSet resultSet, String s) throws SQLException {
+        int sex = resultSet.getInt(s);
+        if (sex != 1 && sex != 2) {
+            return null;
+        }
+        return SexEnum.getEnumById(sex);
+    }
+
+    @Override
+    public SexEnum getNullableResult(ResultSet resultSet, int i) throws SQLException {
+        int sex = resultSet.getInt(i);
+        if (sex != 1 && sex != 2) {
+            return null;
+        }
+        return SexEnum.getEnumById(sex);
+    }
+
+    @Override
+    public SexEnum getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
+        int sex = callableStatement.getInt(i);
+        if (sex != 1 && sex != 2) {
+            return null;
+        }
+        return SexEnum.getEnumById(sex);
+    }
+}
+```
+
+
+
+dao
+
+```java
+import datasource.mybatis.pojo.User;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface MybatisUserDao {
+
+    public User getUser(Long id);
+
+}
+```
+
+
+
+xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="datasource.mybatis.dao.MybatisUserDao">
+    <select id="getUser" parameterType="long" resultType="user">
+        select id, user_name as userName, sex, note from t_user where id = #{id}
+    </select>
+</mapper>
+```
+
+
+
+配置文件
+
+```yaml
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: datasource.mybatis.pojo
+  type-handlers-package: datasource.mybatis.type.handler
+```
+
+
+
+启动文件注释
+
+```java
+@SpringBootApplication
+@MapperScan("datasource.mybatis.dao")
+public class MybatisTest {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MybatisTest.class, args);
+    }
+
+}
+```
+
+
+
+# 数据库事务处理
+
+数据库事务，简称事务，是数据库管理系统执行过程中的一个单元，由一个有限的数据库操作序列构成。
+
+
+
+- spring 使用声明式事务编程
+- 使用 `@Transactional` 注解
+
+
+
+## `@Transactional`
+
+可以注释在：
+
+- 接口
+- 实现类（推荐）
+
+上就可以开始数据库事务
+
+
+
+| 序号 | 名字                   | 类型                         | 说明                           |
+| ---- | ---------------------- | ---------------------------- | ------------------------------ |
+| 1    | value                  | String                       | 通过 bean 的名称指定事务处理器 |
+| 2    | transactionManager     | String                       | 同 value                       |
+| 3    | propagation            | Propagation                  | 指定事务传播的行为             |
+| 4    | isolation              | Isolation                    | 指定隔离级别                   |
+| 5    | timeout                | int                          | 指定超时时间， 单位 秒         |
+| 6    | readOnly               | boolean                      | 是否为只读事务                 |
+| 7    | rollbackFor            | Class<? extends Throwable>[] | 指定发生什么异常的时候回滚     |
+| 8    | rollbackForClassName   | String[]                     | 指定回滚时的异常的全路径类名   |
+| 9    | noRollbackFor          | Class<? extends Throwable>[] | 指定不会滚的异常               |
+| 10   | noRollbackForClassName | String[]                     | 指定不会滚时的异常的全路径类名 |
+
+
+
+### `isolation`隔离级别
+
+#### 数据库事务知识
+
+##### 数据库事务具有4个基本特征（ACID）
+
+- Atomic（原子性）：要么都成功，要么都失败
+- Consistency（一致性）：事务在完成时，必须所有的数据都保持一致状态
+- Isolation（隔离性）：多线程访问的限制
+- Durability（持久性）：事物结束，所有的数据固化
+
+
+
+##### 丢失更新的各种情况
+
+###### 第一类丢失
+
+一个事务回滚了另一个事务的提交，大部分数据库都克服了这类丢失
+
+| 时刻 | 事务1         | 事务2         |
+| ---- | ------------- | ------------- |
+| T1   | 初始库存，100 | 初始库存，100 |
+| T2   | 扣减库存，99  | ——            |
+| T3   | ——            | 扣减库存，99  |
+| T4   | ——            | 提交事务，99  |
+| T5   | 回滚事务，100 |               |
+
+
+
+###### 第二类丢失
+
+两个事务先后提交
+
+| 时刻 | 事务1         | 事务2          |
+| ---- | ------------- | -------------- |
+| T1   | 初始库存，100 | 初始库存，1000 |
+| T2   | 扣减库存，99  | ——             |
+| T3   | ——            | 扣减库存，99   |
+| T4   | ——            | 提交事务，99   |
+| T5   | 提交事务，99  |                |
+
+
+
+#### 详解隔离级别
+
+数据库b标准有4类隔离级别：
+
+- 未提交读
+- 读写提交
+- 可重复度
+- 串行化
+
+
+
+##### 未提交读
+
+允许一个事务读取另一个事务未提交的数据
+
+| 时刻 | 事务1       | 事务2    | 备注                                                         |
+| ---- | ----------- | -------- | ------------------------------------------------------------ |
+| T0   | ——          | ——       | 商品初始化为2                                                |
+| T1   | 读取库存为2 |          |                                                              |
+| T2   | 扣减库存    |          | 库存为1                                                      |
+| T3   |             | 扣减库存 | 库存为0， 读取事务1未提交的库存数量                          |
+| T4   |             | 提交事务 | 库存保存为0                                                  |
+| T5   | 回滚事务    |          | 因为第一类丢失更新已经克服，所以不会回滚到库存2， 库存为0，结果错误 |
+
+允许读取到未提交事务的值。
+
+
+
+##### 读写提交
+
+一个事务只能读取另一个事务已经提交的数据
+
+| 时刻 | 事务1     | 事务2    | 备注                                   |
+| ---- | --------- | -------- | -------------------------------------- |
+| T0   | ——        | ——       | 库存初始2                              |
+| T1   | 读取库存2 |          |                                        |
+| T2   | 扣减库存  |          | 库存为1                                |
+| T3   |           | 扣减库存 | 库存为1，读取不倒事务1未提交的库存事务 |
+| T4   |           | 提交事务 | 库存为1                                |
+| T5   | 回滚事务  |          | 库存结果为1                            |
+
+
+
+但还是会出现不可重读场景
+
+| 时刻 | 事务1     | 事务2       | 备注                            |
+| ---- | --------- | ----------- | ------------------------------- |
+| T0   |           |             | 初始化库存为1                   |
+| T1   | 读取库存1 |             |                                 |
+| T2   | 扣减库存  |             | 事务未提交                      |
+| T3   |           | 读取库存为1 | 认为可以扣减                    |
+| T4   | 提交事务  |             |                                 |
+| T5   |           | 扣减库存    | 失败，因为此时库存为0，无法扣减 |
+
+
+
+##### 可重复读
+
+一个事务读取了数据之后，另外一个事务会被阻塞知道第一个事务被提交或者回滚
+
+| 时刻 | 事务1     | 事务2        | 备注                      |
+| ---- | --------- | ------------ | ------------------------- |
+| T0   |           |              | 库存初始化为1             |
+| T1   | 读取库存1 |              |                           |
+| T2   | 扣减库存  |              | 事务未提交                |
+| T3   |           | 尝试读取库存 | 不允许读取，等待事务1提交 |
+| T4   | 提交事务  |              | 储存变为0                 |
+| T5   |           | 读取库存     | 库存为0，无法扣减         |
+
+
+
+但还是会出现幻读的情况
+
+| 时刻 | 事务1           | 事务2              | 备注                                             |
+| ---- | --------------- | ------------------ | ------------------------------------------------ |
+| T0   | 读取库存50      |                    | 库存初始化为100， 现在已经销售500个，库存50      |
+| T1   |                 | 查询交易记录，50笔 |                                                  |
+| T2   | 扣减库存        |                    |                                                  |
+| T3   | 插入1笔交易记录 |                    |                                                  |
+| T4   | 提交事务        |                    | 库存49，交易记录51                               |
+| T5   |                 | 打印交易记录，51笔 | 这里与查询的不一致，在事务2看来有1笔交易是虚幻的 |
+
+
+
+##### 串行化
+
+数据库最高隔离级别，要求所有SQL都按照顺序执行
+
+
+
+##### 使用合理的隔离级别
+
+|          | 脏读 | 不可重复读 | 幻读 |
+| -------- | ---- | ---------- | ---- |
+| 未提交读 | √    | √          | √    |
+| 读写提交 | √    | √          | ×    |
+| 可重复读 | √    | ×          | ×    |
+| 串行化   | ×    | ×          | ×    |
+
+
+
+-  脏读：事务读取到了另一个事务的值
+- 不可重复度：事务未能读取到另外事务的值
+- 幻读：存在于统计表的情况，统计表的变化慢于主表
+
+
+
+### `isolation` 的使用
+
+- `Isolation.DEFAULT(-1)`：数据库默认
+- `Isolation.READ_UNCOMMITTED(1)`：未提交读
+- `Isolation.READ_COMMITTED(2)`：读写提交
+- `Isolation.REPEATABLE_READ(4)`：可重复读
+- `Isolation.SERIALIZABLE(8)`： 串行化
+
+
+
+配置文件：
+
+```pro
+# -1: 数据库默认隔离级别
+# 1 ： 未提交读
+# 2 ：读写提交
+# 4 ：可重复读
+# 8 ：串行化
+# tomcat 数据源
+spring.datasourc.tomcat.default-transaction-isolation=2
+# dpcp2
+spring.datasource.dbcp2.default-transaction-isolation=2
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

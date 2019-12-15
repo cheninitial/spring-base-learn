@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- services -->
+
+    <import resource="dao.xml" />
+
+    <bean id="helloService" name="helloService2, helloService3" class="com.fang2chen.test.spring.ioctest.xml.HelloServiceImpl">
+        <property name="name" value="cyl"/>
+        <property name="helloConfig" ref="helloConfig" />
+        <!-- additional collaborators and configuration for this bean go here -->
+    </bean>
+
+    <!-- more bean definitions for services go here -->
+
+</beans>

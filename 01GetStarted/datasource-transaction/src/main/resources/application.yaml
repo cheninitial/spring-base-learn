@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3316/spring?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: cyl199203
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    tomcat:
+      max-idle: 10
+      max-active: 50
+      max-wait: 10000
+      initial-size: 5
+
+
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.fang2chen.test.datasource.transaction.pojo
+  type-handlers-package: com.fang2chen.test.datasource.transaction.type.handler
+logging:
+  level:
+    root: debug
+    org.springframework: debug
+    org.org.mybatis: debug
