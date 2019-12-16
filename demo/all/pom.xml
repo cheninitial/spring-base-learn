@@ -14,6 +14,11 @@
         <module>spring-customer-banner</module>
         <module>spring-application-event</module>
         <module>spring-application-arguments</module>
+        <module>spring-application-exit</module>
+        <module>spring-admin-features</module>
+        <module>spring-configuration-considered-order</module>
+        <module>spring-web-validator</module>
+        <module>spring-web-cors-filter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -48,6 +53,11 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.0.7</version>
         </dependency>
     </dependencies>
 

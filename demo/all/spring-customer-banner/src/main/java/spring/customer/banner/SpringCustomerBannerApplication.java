@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringCustomerBannerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringCustomerBannerApplication.class, args);
+
+        SpringApplication springApplication = new SpringApplication(SpringCustomerBannerApplication.class);
+        springApplication.run(args);
     }
 
 }
