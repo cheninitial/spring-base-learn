@@ -19,6 +19,14 @@
         <module>spring-configuration-considered-order</module>
         <module>spring-web-validator</module>
         <module>spring-web-cors-filter</module>
+        <module>spring-integration-mail</module>
+        <module>spring-integration-quartz-scheduler</module>
+        <module>spring-task-execution-scheduling</module>
+        <module>spring-monitoring-jmx</module>
+        <module>spring-test</module>
+        <module>spring-integration-websocket</module>
+        <module>spring-actuator</module>
+        <module>spring-actuator-admin-ui</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
