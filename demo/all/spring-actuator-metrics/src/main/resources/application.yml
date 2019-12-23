@@ -1,0 +1,36 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [info, health, beans, env, metrics, mappings, scheduledtasks, sessions, threaddump, docs, logfile, jolokia] #暴露的端点 docs是web端点
+      base-path: /actuator #默认/actuator 不更改可不用配置
+      #CORS跨域支持
+      cors:
+        allowed-origins: http：//example.com
+        allowed-methods: GET,PUT,POST,DELETE
+  endpoint:
+    beans:
+      cache:
+        time-to-live: 10s #端点缓存响应的时间量
+    health:
+      show-details: always #详细信息显示给所有用户
+  server:
+    port: 10000 #默认8080
+    address: 127.0.0.1 #配置此项表示不允许远程连接
+
+  #监测
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+
+
+
+
+# 配置应用的基本信息 可通过 http://127.0.0.1:8080/actuator/info 访问
+info:
+  app:
+    name: @app.name@
+    description: @app.description@
+    version: @app.version@
+    java.version: @java.version@

@@ -10,12 +10,13 @@ import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebSe
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
+import spring.bean.life.BeanByContent;
 
 @Component
 public class ApplicationTestRunner implements ApplicationRunner {
 
     @Autowired
-    private AnnotationConfigServletWebServerApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
 
     @Override
@@ -24,22 +25,20 @@ public class ApplicationTestRunner implements ApplicationRunner {
         System.out.println("ApplicationTestRunner.run");
 
         /**
-         * 这种方法初始化的 Bean 没有生命周期
+         * 这种方法初始化的 Bean 有生命周期
          * */
-        applicationContext.register(BeanByContent.class);
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(BeanByContent.class, () -> {
+            // 此处用于初始化 bean 和 @Bean 的写法差不多
+            BeanByContent beanByContent = new BeanByContent();
+            return beanByContent;
+        });
+        BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
+        BeanDefinitionRegistry beanFactory = (BeanDefinitionRegistry) applicationContext.getBeanFactory();
+        beanFactory.registerBeanDefinition("beanByContent", beanDefinition);
 
-        /**
-         * 这种方法初始化的 Bean 没有生命周期
-         * */
-//        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(BeanByContent.class);
-//        BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
-//        BeanDefinitionRegistry beanFactory = (BeanDefinitionRegistry) applicationContext.getBeanFactory();
-//        beanFactory.registerBeanDefinition("beanByContent", beanDefinition);
-//
-//
-//        Object beanByContent = applicationContext.getBean("beanByContent");
-//        System.out.println(beanByContent);
 
+        Object beanByContent = applicationContext.getBean("beanByContent");
+        System.out.println(beanByContent);
 
         return;
     }

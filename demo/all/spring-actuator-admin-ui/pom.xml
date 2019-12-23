@@ -15,6 +15,7 @@
         <module>admin-ui</module>
         <module>application-no1</module>
         <module>application-no2</module>
+        <module>admin-ui-2</module>
     </modules>
 
 

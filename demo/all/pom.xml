@@ -27,6 +27,10 @@
         <module>spring-integration-websocket</module>
         <module>spring-actuator</module>
         <module>spring-actuator-admin-ui</module>
+        <module>spring-actuator-metrics</module>
+        <module>spring-actuator-process</module>
+        <module>spring-boot-aware</module>
+        <module>spring-bean-autowired</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
